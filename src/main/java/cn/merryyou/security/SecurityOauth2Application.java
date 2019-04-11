@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * 入口
+ */
 @RestController
 @SpringBootApplication
 @Slf4j
@@ -50,5 +53,10 @@ public class SecurityOauth2Application {
     @GetMapping("/permitAll")
     public String getPermitAll() {
         return "permitAll";
+    }
+
+    @GetMapping("/aa")
+    public String index() {
+        return "aa";
     }
 }

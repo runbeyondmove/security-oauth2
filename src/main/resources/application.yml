@@ -1,20 +1,32 @@
+server:
+  session:
+    timeoutsession: 60
+  port: 8080
 security:
   oauth2:
     client:
       client-id: merryyou
       client-secret: merryyou
-server:
-  session:
-    timeout: 60
-  port: 9090
+      user-authorization-uri: http://127.0.0.1:8080/oauth/authorize
+      access-token-uri: http://127.0.0.1:8080/oauth/token
+    resource:
+#        user-info-uri: http://127.0.0.1:8000/auth/users #返回认证服务器检查
+#        prefer-token-info: false
+      token-info-uri: http://127.0.0.1:8000/oauth/check_token
+      prefer-token-info: true
+# 此处的 filter-order 非常重要，因为自Spring Boot 1.5.* 之后，resource server 的 filter 的顺序默认在 basic authentication filter chain 之后，
+# 所以如果不配置此项，将会导致使用 access_token 访问 resource server 的时候返回 401 状态码。
+      # filter-order: 3
 spring:
   session:
     store-type: redis
   redis:
-    host: localhost
-    port: 6380
+    host: 127.0.0.1
+    port: 6379
+    password: root
 logging:
-  level: debug
+  level:
+    root: info
 merryyou:
   security:
     oauth2:
@@ -23,6 +35,10 @@ merryyou:
       clients[0]:
         clientId: merryyou
         clientSecret: merryyou
+        scope: all
+        redirectUri: http://localhost:8081/aiqiyi/qq/redirect
       clients[1]:
-              clientId: merryyou1
-              clientSecret: merryyou1
+        clientId: merryyou1
+        clientSecret: merryyou1
+        scope: select
+        redirectUri: http://localhost:8081/aiqiyi/qq/redirect

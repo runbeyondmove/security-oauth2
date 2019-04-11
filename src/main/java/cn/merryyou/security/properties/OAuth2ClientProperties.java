@@ -17,4 +17,8 @@ public class OAuth2ClientProperties {
     private String clientSecret;
 
     private Integer accessTokenValiditySeconds = 7200;
+
+    private String scope;
+
+    private String redirectUri;
 }

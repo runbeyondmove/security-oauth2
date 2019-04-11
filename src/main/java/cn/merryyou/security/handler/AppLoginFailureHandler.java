@@ -17,6 +17,8 @@ import java.io.IOException;
 /**
  * Created on 2018/5/24.
  *
+ * 登陆失败处理器
+ *
  * @author zlf
  * @since 1.0
  */

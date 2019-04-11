@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.provider.token.store.redis.RedisToken
 /**
  * Created on 2018/1/21 0021.
  *
+ * 配置TokenStoreConfig用于存储Token
+ *
  * @author zlf
  * @email i@merryyou.cn
  * @since 1.0

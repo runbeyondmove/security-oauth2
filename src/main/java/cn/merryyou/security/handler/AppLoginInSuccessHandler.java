@@ -4,6 +4,8 @@ import cn.merryyou.security.utils.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
+import org.assertj.core.util.Lists;
+import org.assertj.core.util.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * APP登录成功处理器
@@ -49,7 +52,7 @@ public class AppLoginInSuccessHandler extends SavedRequestAwareAuthenticationSuc
         log.info("【AppLoginInSuccessHandler】 onAuthenticationSuccess authentication={}", authentication);
 
         String header = request.getHeader("Authorization");
-
+        log.info("【AppLoginInSuccessHandler】 request={}", request);
         if (header == null || !header.startsWith("Basic ")) {
             throw new UnapprovedClientAuthenticationException("请求头中无client信息");
         }
@@ -68,7 +71,8 @@ public class AppLoginInSuccessHandler extends SavedRequestAwareAuthenticationSuc
             throw new UnapprovedClientAuthenticationException("clientSecret 不匹配" + clientId);
         }
 
-        TokenRequest tokenRequest = new TokenRequest(new HashMap<>(), clientId, clientDetails.getScope(), "custom");
+        Map<String, String> map = new HashMap<>(16);
+        TokenRequest tokenRequest = new TokenRequest(map, clientId, clientDetails.getScope(), "custom");
 
         OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
 

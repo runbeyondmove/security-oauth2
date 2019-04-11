@@ -32,7 +32,7 @@ public class CustomOauthExceptionSerializer extends StdSerializer<CustomOauthExc
         gen.writeStringField("message", value.getMessage());
 //        gen.writeStringField("message", "用户名或密码错误");
         gen.writeStringField("path", request.getServletPath());
-        gen.writeStringField("timestamp", String.valueOf(new Date().getTime()));
+        gen.writeStringField("timestamp", String.valueOf(System.currentTimeMillis()));
         if (value.getAdditionalInformation()!=null) {
             for (Map.Entry<String, String> entry : value.getAdditionalInformation().entrySet()) {
                 String key = entry.getKey();
