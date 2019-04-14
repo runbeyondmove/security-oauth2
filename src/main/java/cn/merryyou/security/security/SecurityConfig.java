@@ -1,14 +1,8 @@
 package cn.merryyou.security.security;
 
-import cn.merryyou.security.handler.AppLoginFailureHandler;
-import cn.merryyou.security.handler.AppLoginInSuccessHandler;
-//import cn.merryyou.security.handler.AppLogoutSuccessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,11 +10,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+//import cn.merryyou.security.handler.AppLogoutSuccessHandler;
 
 /**
  * Created on 2018/1/19.
@@ -51,6 +45,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
      *
      *  优先级高的http配置是可以覆盖优先级低的配置的。
      *
+     *  官方文档：https://docs.spring.io/spring-security/site/docs/5.1.6.BUILD-SNAPSHOT/reference/htmlsingle/#tutorial-sample
+     *
+     * 特别是权限配置不清楚的最好看官方案例
+     *
      * @param http
      * @throws Exception
      */
@@ -78,6 +76,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                 .csrf().disable();*/
 
+
+        /**
+         * 以下是权限表达式的案例
+         *
+         * Spring Security其实就是一组过滤器链，可以了解一下它的原理
+         *
+         * 可以在authorizeRequests() 后定义多个antMatchers()配置器来控制不同的url接受不同权限的用户访问
+         *
+         * **/
         //http
         //            // 头部缓存
         //            .headers()
@@ -87,15 +94,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         //            .frameOptions()
         //            .sameOrigin()
         //        .and()
-        //            .authorizeRequests()  //自定义哪些URL需要权限验证，哪些不需要
-        //            .antMatchers("/resources","/favicon.ico").permitAll()
+        //            .authorizeRequests()  // 表示后面都是授权请求（自定义哪些URL需要权限验证，哪些不需要）
+        //            .antMatchers("/resources","/favicon.ico").permitAll() // 表示指定的路径都放行，不需要权限认证
         //            .antMatchers("/permitAll").permitAll()
-        //            //.antMatchers( "/admin/**").hasRole("ADMIN" )
-        //            //.antMatchers( "/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
+        //            //.antMatchers( "/admin/**").hasRole("ADMIN" ) // 拥有admin角色才能访问指定的路径
+        //            //.antMatchers( "/db/**").access("hasRole('ADMIN') and hasRole('DBA')") // 拥有两个角色才能访问
         //            .antMatchers("/js/**","css/**","/fonts/**","/static/**","/images/**").permitAll()
-        //            .anyRequest().authenticated()  //其他所有路径都需要权限校验，以上的可以根据角色或者权限放行
+        //            .anyRequest() // 表示除开上面定义的路径，其他的路径
+        //            .authenticated()  // 其他所有路径都需要认证
+        //              // 总结就是：以上的路径可以根据角色或者权限放行，其他路径都需要认证
         //        .and()
-        //            .formLogin() //内部注册 UsernamePasswordAuthenticationFilter
+        //            .formLogin() // 内部注册 UsernamePasswordAuthenticationFilter
         //            //.loginPage("/login.html") //表单登录页面地址
         //            //.loginProcessingUrl("/login")//form表单POST请求url提交地址，默认为/login
         //            //.passwordParameter("password")//form表单用户名参数名
@@ -107,7 +116,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         //            //.failureHandler(AuthenticationFailureHandler)
         //            //.successHandler(AuthenticationSuccessHandler)
         //            //.failureUrl("/login?error")
-        //            .permitAll()//允许所有用户都有权限访问登录页面
+        //            .permitAll()//允许所有用户都有权限访问登录页面，否则验证流程就会进入死循环
         //        .and()
         //            .csrf().disable()//默认开启，这里先显式关闭
         //        .cors(); //跨域支持
