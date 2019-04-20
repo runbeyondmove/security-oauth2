@@ -15,6 +15,9 @@ import org.springframework.security.oauth2.common.exceptions.UnapprovedClientAut
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -53,9 +56,9 @@ public class AppLoginInSuccessHandler extends SavedRequestAwareAuthenticationSuc
 
         String header = request.getHeader("Authorization");
         log.info("【AppLoginInSuccessHandler】 request={}", request);
-        if (header == null || !header.startsWith("Basic ")) {
-            throw new UnapprovedClientAuthenticationException("请求头中无client信息");
-        }
+        //if (header == null || !header.startsWith("Basic ")) {
+        //    throw new UnapprovedClientAuthenticationException("请求头中无client信息");
+        //}
         String[] tokens = this.extractAndDecodeHeader(header, request);
 
         assert tokens.length == 2;
@@ -83,7 +86,6 @@ public class AppLoginInSuccessHandler extends SavedRequestAwareAuthenticationSuc
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(token));
         log.info("token={}", JsonUtil.toJson(token));
-
     }
 
     /**
@@ -112,4 +114,16 @@ public class AppLoginInSuccessHandler extends SavedRequestAwareAuthenticationSuc
             return new String[]{token.substring(0, delim), token.substring(delim + 1)};
         }
     }
+
+
+    //@Override
+    //public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
+    //    response.setContentType("application/json;charset=utf-8");
+    //
+    //    RequestCache cache = new HttpSessionRequestCache();
+    //    SavedRequest savedRequest = cache.getRequest(request, response);
+    //    String url = savedRequest.getRedirectUrl();
+    //
+    //    response.sendRedirect(url);
+    //}
 }

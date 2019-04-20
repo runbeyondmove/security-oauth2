@@ -38,12 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
      *  执行的顺序按照此值从小到大执行，即值小优先级高
      *
      *
-     *  WebSecurityConfigurerAdapter是默认情况下spring security的http配置
-     *  ResourceServerConfigurerAdapter是默认情况下spring security oauth2的http配置
-     *      可以在配置文件中配置security.oauth2.resource.filter-order=99
-     *
-     *
-     *  优先级高的http配置是可以覆盖优先级低的配置的。
+     *  WebSecurityConfigurerAdapter是默认情况下spring security的http配置  >>>>>>order=100
+     *  ResourceServerConfigurerAdapter是默认情况下spring security oauth2的http配置  >>>>>>order=3(硬编码，不可改变的)
      *
      *  官方文档：https://docs.spring.io/spring-security/site/docs/5.1.6.BUILD-SNAPSHOT/reference/htmlsingle/#tutorial-sample
      *
@@ -130,27 +126,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 
 
-        http.
-                requestMatchers()
-                // /oauth/authorize link org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint
-                // 必须登录过的用户才可以进行 oauth2 的授权码申请
-                .antMatchers("/", "/login","/oauth/authorize")
-                .and()
-                .authorizeRequests()
-                .anyRequest().permitAll()
-                .and()
-                .formLogin()
-                .and()
-                .httpBasic()
-                .disable()
-                .exceptionHandling()
-                .accessDeniedPage("/login?authorization_error=true")
-                .and()
-                // TODO: put CSRF protection back into this endpoint
-                .csrf()
-                .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize"))
-                .disable();
+        //http.
+        //        requestMatchers()
+        //        // /oauth/authorize link org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint
+        //        // 必须登录过的用户才可以进行 oauth2 的授权码申请
+        //        .antMatchers("/", "/login","/oauth/authorize")
+        //        .and()
+        //        .authorizeRequests()
+        //        .anyRequest().permitAll()
+        //        .and()
+        //        .formLogin()
+        //        .and()
+        //        .httpBasic()
+        //        .disable()
+        //        .exceptionHandling()
+        //        .accessDeniedPage("/login?authorization_error=true")
+        //        .and()
+        //        // TODO: put CSRF protection back into this endpoint
+        //        .csrf()
+        //        .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize"))
+        //        .disable();
 
+        http
+                    .requestMatchers()
+                    .antMatchers("/oauth/authorize")
+                .and()
+                    .authorizeRequests().anyRequest().authenticated()
+                .and()
+                    .formLogin()
+                .and()
+                    .csrf().disable();
     }
 
     @Bean

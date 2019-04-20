@@ -61,31 +61,13 @@ public class MerryyouResourceServerConfig extends ResourceServerConfigurerAdapte
     public void configure(HttpSecurity http) throws Exception {
 
         // @formatter:off
-        //http.formLogin().permitAll()
-        //        //.successHandler(appLoginInSuccessHandler)//登录成功处理器
-        //        //.failureHandler(appLoginFailureHandler)
-        //        //.and()
-        //        //    .exceptionHandling().authenticationEntryPoint(new AuthExceptionEntryPoint())
-        //        //.and()
-        //        //    .apply(permitAllSecurityConfig)
-        //        .and()
-        //            .authorizeRequests()
-        //            .antMatchers("/user").hasRole("USER")
-        //            .antMatchers("/forbidden").hasRole("ADMIN")
-        //            .antMatchers("/permitAll").permitAll()
-        //            .anyRequest().authenticated()
-        //        .and()
-        //            .csrf().disable();
-
-
-
         http.formLogin().permitAll()
-//                .sessionManagement()
-//                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-//                    .and()
-//                .requestMatchers()
-//                // 保险起见，防止被主过滤器链路拦截，控制登陆后才能访问
-//                .antMatchers("/")
+                .successHandler(appLoginInSuccessHandler)//登录成功处理器
+                //.failureHandler(appLoginFailureHandler)
+                //.and()
+                //    .exceptionHandling().authenticationEntryPoint(new AuthExceptionEntryPoint())
+                //.and()
+                //    .apply(permitAllSecurityConfig)
                 .and()
                     .authorizeRequests()
                     .antMatchers("/user").hasRole("USER")
@@ -95,6 +77,24 @@ public class MerryyouResourceServerConfig extends ResourceServerConfigurerAdapte
                 .and()
                     .csrf().disable();
 
+
+
+//        http.formLogin().permitAll()
+//                //.successHandler(appLoginInSuccessHandler)//登录成功处理器
+////                .sessionManagement()
+////                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+////                    .and()
+////                .requestMatchers()
+////                // 保险起见，防止被主过滤器链路拦截，控制登陆后才能访问
+////                .antMatchers("/")
+//                .and()
+//                    .authorizeRequests()
+//                    .antMatchers("/user").hasRole("USER")
+//                    .antMatchers("/forbidden").hasRole("ADMIN")
+//                    .antMatchers("/permitAll").permitAll()
+//                    .anyRequest().authenticated()
+//                .and()
+//                    .csrf().disable();
         // @formatter:ON
     }
 
