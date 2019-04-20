@@ -31,7 +31,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  *  就如 /login 链接，你需要在 WebSecurityConfigurer配置对象中（子类）进行设置。
  *  一句话就是：资源服务器（MerryyouResourceServerConfig）的优先级比SecurityConfig的优先级高
  *
- * 参考文章：https://www.cnblogs.com/davidwang456/p/6480681.html
+ * 参考文章：
+ * https://www.cnblogs.com/davidwang456/p/6480681.html
+ * https://www.cnblogs.com/cjsblog/p/9184173.html
  *
  * @author zlf
  * @since 1.0

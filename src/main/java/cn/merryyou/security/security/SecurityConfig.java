@@ -1,8 +1,10 @@
 package cn.merryyou.security.security;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +21,51 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 /**
  * Created on 2018/1/19.
  *
+ * 授权端点/oauth/authorize应该被保护起来，以至于它只能被认证过的用户访问。下面是一个例子，用标准的Spring Security WebSecurityConfigurer ：
+
+ @Override
+ protected void configure(HttpSecurity http) throws Exception {
+     http
+     .authorizeRequests().antMatchers("/login").permitAll().and()
+     // default protection for all resources (including /oauth/authorize)
+     .authorizeRequests()
+     .anyRequest().hasRole("USER")
+     // ... more configuration, e.g. for form login
+ }
+ *
+ * 注意：如果您的授权服务器同时也是一个资源服务器的话，那么就有另一个具有较低优先级的安全过滤器链来控制API资源。
+ * 通过访问令牌来保护这些请求，你需要它们的路径不能与主用户过滤器链中的那些相匹配，
+ * 所以请确保包含一个请求matcher，它只挑选出上面的WebSecurityConfigurer中的非api资源。
+  *
+  * 重点：使用具有较低优先级的安全过滤器链来控制API资源，而WebSecurityConfigurer控制非api资源
+  *
+  * 推荐：在资源服务器上控制api资源，WebSecurityConfigurer控制非api资源，参考文章：https://segmentfault.com/q/1010000014633733/a-1020000014636929
+  * 如：
+ @Configuration
+ @EnableResourceServer
+ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+     @Override
+     public void configure(HttpSecurity http) throws Exception {
+         http
+         .requestMatchers()
+         .antMatchers("/api/**")
+         .and()
+         .authorizeRequests()
+         .antMatchers("/api/**")
+         .authenticated();
+    }
+ }
+ *
+  * security.oauth2.resource.filter-order = 3这个控制oauth2过滤器的顺序在springboot2.0以后已经过期
+  *
+  * ResourceServerConfiguration 和 SecurityConfiguration上配置的顺序,SecurityConfiguration一定要在ResourceServerConfiguration 之前，
+  * 因为spring实现安全是通过添加过滤器(Filter)来实现的，基本的安全过滤应该在oauth过滤之前,
+  * 所以在SecurityConfiguration设置@Order(2), 在ResourceServerConfiguration上设置@Order(6)
+  *
+  * 参考文章：
+  * https://blog.csdn.net/qq_27828675/article/details/82466599
+  * https://segmentfault.com/a/1190000012384850
+  *
  * @author zlf
  * @since 1.0
  */
